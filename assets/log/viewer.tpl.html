@@ -1,0 +1,146 @@
+<!doctype html>
+<!-- Template for log/index.html. Don't edit index.html; edit decisions.md / changes.md and run python3 log/build.py. -->
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>项目日志</title>
+<style>
+  @font-face { font-family: "Neue Montreal"; src: url("../website/public/fonts/NeueMontreal-Regular.woff2") format("woff2"); font-weight: 400; }
+  @font-face { font-family: "Neue Montreal"; src: url("../website/public/fonts/NeueMontreal-Medium.woff2") format("woff2"); font-weight: 500; }
+  :root { --bg: #ECECEA; --card: #FFFFFF; --ink: #161616; --muted: rgba(22,22,22,.6); --faint: rgba(22,22,22,.4); --line: rgba(22,22,22,.12); --priv: #B42318; --dec: #2F4BFF; --chg: #21483A; }
+  * { box-sizing: border-box; }
+  html { overflow-x: clip; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.55 "Neue Montreal", "Helvetica Neue", "PingFang SC", Arial, sans-serif; }
+  .mono { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .app { max-width: 1320px; margin: 0 auto; padding: 24px 16px 80px; display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 28px; align-items: start; }
+  @media (max-width: 860px) { .app { grid-template-columns: 1fr; } .side { position: static !important; max-height: none !important; } }
+  .side { position: sticky; top: 16px; max-height: calc(100vh - 32px); overflow: auto; display: grid; gap: 14px; }
+  h1 { font-size: 26px; font-weight: 500; letter-spacing: -.02em; line-height: 1.1; margin: 4px 0 0; }
+  .stats { display: flex; gap: 14px; }
+  .stats b { display: block; font-size: 24px; font-weight: 500; line-height: 1; }
+  .stats span { font-size: 12px; color: var(--muted); }
+  .seg { display: inline-flex; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 2px; }
+  .seg button { border: 0; background: transparent; font: inherit; font-size: 13px; padding: 4px 12px; border-radius: 999px; cursor: pointer; color: var(--ink); }
+  .seg button.on { background: var(--ink); color: #fff; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 2px 10px; font-size: 12.5px; cursor: pointer; }
+  .chip.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .chip i { font-style: normal; opacity: .55; margin-left: 4px; }
+  label.cs { display: flex; gap: 8px; align-items: center; font-size: 13.5px; cursor: pointer; }
+  label.cs input { accent-color: var(--ink); width: 16px; height: 16px; }
+  input.q { width: 100%; border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; font: inherit; font-size: 13.5px; background: #fff; }
+  .dates { display: grid; gap: 2px; font-size: 12.5px; }
+  .dates a { color: var(--ink); text-decoration: none; display: flex; justify-content: space-between; padding: 2px 6px; border-radius: 6px; }
+  .dates a:hover { background: #fff; }
+  .dates a span { color: var(--muted); }
+  .day { margin: 0 0 26px; }
+  .day h2 { position: sticky; top: 0; z-index: 2; background: var(--bg); font-size: 15px; font-weight: 500; margin: 0 0 10px; padding: 8px 0 6px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; }
+  .e { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; margin: 0 0 10px; border-left: 4px solid var(--dec); }
+  .e.change { border-left-color: var(--chg); }
+  .e__top { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .e__id { font-family: ui-monospace, Menlo, monospace; font-size: 12px; font-weight: 600; }
+  .e__type { font-size: 11.5px; border: 1px solid var(--line); border-radius: 999px; padding: 0 8px; color: var(--muted); }
+  .e__time { font-family: ui-monospace, Menlo, monospace; font-size: 11px; color: var(--faint); margin-left: auto; }
+  .priv { color: #fff; background: var(--priv); border-radius: 999px; padding: 0 7px; font-size: 10.5px; font-family: ui-monospace, Menlo, monospace; letter-spacing: .06em; }
+  .e__t { font-size: 19px; font-weight: 500; letter-spacing: -.01em; line-height: 1.25; margin: 6px 0 10px; }
+  .e dl { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 6px 14px; margin: 0; font-size: 14px; }
+  .e dt { color: var(--muted); font-size: 12.5px; padding-top: 1px; }
+  .e dd { margin: 0; overflow-wrap: anywhere; }
+  .e blockquote { margin: 0 0 4px; padding: 2px 0 2px 10px; border-left: 2px solid var(--ink); font-size: 14px; }
+  .opts { display: flex; flex-wrap: wrap; gap: 4px; }
+  .opts span { border: 1px solid var(--line); border-radius: 999px; padding: 0 8px; font-size: 12.5px; }
+  .opts span.pk { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .opts span b { font-weight: 500; background: var(--ink); color: #fff; border-radius: 999px; padding: 0 6px; margin-left: 2px; }
+  .opts + .opts { margin-top: 5px; }
+  .imgs { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; margin-top: 10px; }
+  .imgs a { display: block; border-radius: 6px; overflow: hidden; border: 1px solid var(--line); background: #F6F6F4; }
+  .imgs img { display: block; width: 100%; height: 150px; object-fit: cover; object-position: top; }
+  .imgs small { display: block; font: 10.5px ui-monospace, Menlo, monospace; color: var(--muted); padding: 3px 6px; }
+  .links a, .links span { font-family: ui-monospace, Menlo, monospace; font-size: 12px; color: var(--ink); }
+  .src { font-size: 11.5px; color: var(--faint); }
+  .empty { color: var(--muted); padding: 40px 0; }
+  body.cs .src-row { display: none; }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div>
+      <p class="mono" id="kicker"></p>
+      <h1 id="title"></h1>
+    </div>
+    <div class="stats" id="stats"></div>
+    <div class="seg" id="lang"><button data-l="zh">中文</button><button data-l="en">English</button></div>
+    <div class="seg" id="kind"><button data-k="all"></button><button data-k="decision"></button><button data-k="change"></button></div>
+    <div class="chips" id="types"></div>
+    <label class="cs"><input type="checkbox" id="csmode"><span id="cslabel"></span></label>
+    <input class="q" id="q" type="search">
+    <div class="dates" id="dates"></div>
+  </aside>
+  <main id="list"></main>
+</div>
+<script>
+const DATA = /*%%DATA%%*/[];
+const T = {
+  zh: { kicker: '项目 · 日志', title: '决策与改动', all: '全部', decision: '决策', change: '改动', cs: 'Case study 模式（隐藏 private）', q: '搜索…', decisions: '条决策', changes: '条改动', days: '天', empty: '没有符合条件的条目',
+    f: { asked: '谁提的', quote: '原话', decided: '谁定的', options: '选项', why: '为什么', rejected: '放弃了', outcome: '结果', what: '改了什么', verify: '怎么验证', rollback: '回退', links: '链接', source: '来源' },
+    type: { board: '方案板选择', reject: '否决 / 反悔', night: '夜间自定', client: '客户反馈', prod: '同意上线', method: '工作方式', deploy: '部署', site: '全站改动', snapshot: '快照', component: '新组件', daily: '当日小修' } },
+  en: { kicker: 'Project · log', title: 'Decisions and changes', all: 'All', decision: 'Decisions', change: 'Changes', cs: 'Case-study mode (hide private)', q: 'Search…', decisions: 'decisions', changes: 'changes', days: 'days', empty: 'No entries match',
+    f: { asked: 'Asked by', quote: 'Quote', decided: 'Decided by', options: 'Options', why: 'Why', rejected: 'Rejected', outcome: 'Outcome', what: 'What changed', verify: 'Checked', rollback: 'Rollback', links: 'Links', source: 'Source' },
+    type: { board: 'Board pick', reject: 'Rejection', night: 'Overnight call', client: 'Client round', prod: 'Go-ahead', method: 'Method', deploy: 'Deploy', site: 'Site-wide', snapshot: 'Snapshot', component: 'Component', daily: 'Daily fixes' } },
+};
+const S = { lang: 'zh', kind: 'all', types: new Set(), cs: false, q: '' };
+try { Object.assign(S, JSON.parse(localStorage.getItem('tslog') || '{}'), { types: new Set() }); } catch {}
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const L = (e, k) => e[`${k}.${S.lang}`] ?? e[`${k}.${S.lang === 'zh' ? 'en' : 'zh'}`] ?? e[k] ?? '';
+const link = (s) => /^https?:\/\//.test(s) ? `<a href="${esc(s)}" target="_blank" rel="noopener">${esc(s)}</a>` : `<span>${esc(s)}</span>`;
+
+function card(e) {
+  const t = T[S.lang], row = (k, v) => v ? `<dt>${t.f[k]}</dt><dd>${v}</dd>` : '';
+  // Options: groups separated by "; " (one question each), chips by " · ". A chip wrapped in ** is the pick; ** inside a chip marks the picked part.
+  const chip = (o) => { o = o.trim(); if (/^\*\*[^*]+\*\*$/.test(o)) return `<span class="pk">${esc(o.slice(2, -2))}</span>`; return `<span>${esc(o).replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>')}</span>`; };
+  const opts = e.options ? e.options.split(/;\s+/).map((g) => `<div class="opts">${g.split(' · ').map(chip).join('')}</div>`).join('') : '';
+  const quotes = (e.quote || []).map((q) => `<blockquote>${esc(q)}</blockquote>`).join('');
+  const body = e.kind === 'decision'
+    ? row('asked', esc(L(e, 'asked'))) + row('quote', quotes) + row('decided', esc(L(e, 'decided'))) + row('options', opts) + row('why', esc(L(e, 'why'))) + row('rejected', esc(L(e, 'rejected'))) + row('outcome', esc(L(e, 'outcome')))
+    : row('what', esc(L(e, 'what'))) + row('quote', quotes) + row('why', esc(L(e, 'why'))) + row('verify', esc(L(e, 'verify'))) + row('rollback', esc(L(e, 'rollback')));
+  const links = (e.links || []).length ? `<dt>${t.f.links}</dt><dd class="links">${e.links.map(link).join(' · ')}</dd>` : '';
+  const src = e.source ? `<dt class="src-row">${t.f.source}</dt><dd class="src src-row">${esc(e.source)}</dd>` : '';
+  const imgs = (e.img || []).length ? `<div class="imgs">${e.img.map((p) => `<a href="${esc(p)}" target="_blank"><img src="${esc(p)}" loading="lazy" alt=""><small>${esc(p.split('/').pop())}</small></a>`).join('')}</div>` : '';
+  return `<article class="e ${e.kind}" id="${e.id}"><div class="e__top"><span class="e__id">${e.id}</span><span class="e__type">${t.type[e.type] || esc(e.type)}</span>${e.private === 'yes' ? '<span class="priv">PRIVATE</span>' : ''}<span class="e__time">${esc(e.date)}${e.time ? ' ' + esc(e.time) + ' UTC' : ''}</span></div><div class="e__t">${esc(L(e, 'title'))}</div><dl>${body}${links}${src}</dl>${imgs}</article>`;
+}
+
+function render() {
+  const t = T[S.lang];
+  document.documentElement.lang = S.lang === 'zh' ? 'zh' : 'en';
+  document.getElementById('kicker').textContent = t.kicker;
+  document.getElementById('title').textContent = t.title;
+  document.getElementById('cslabel').textContent = t.cs;
+  document.getElementById('q').placeholder = t.q;
+  document.getElementById('csmode').checked = S.cs;
+  document.body.classList.toggle('cs', S.cs);
+  document.querySelectorAll('#lang button').forEach((b) => b.classList.toggle('on', b.dataset.l === S.lang));
+  document.querySelectorAll('#kind button').forEach((b) => { b.textContent = t[b.dataset.k]; b.classList.toggle('on', b.dataset.k === S.kind); });
+  const base = DATA.filter((e) => !(S.cs && e.private === 'yes'));
+  const typesHere = [...new Set(base.filter((e) => S.kind === 'all' || e.kind === S.kind).map((e) => e.type))];
+  document.getElementById('types').innerHTML = typesHere.map((ty) => `<span class="chip${S.types.has(ty) ? ' on' : ''}" data-t="${ty}">${t.type[ty] || ty}<i>${base.filter((e) => e.type === ty).length}</i></span>`).join('');
+  const q = S.q.trim().toLowerCase();
+  const list = base.filter((e) => (S.kind === 'all' || e.kind === S.kind) && (!S.types.size || S.types.has(e.type)) && (!q || JSON.stringify(e).toLowerCase().includes(q)));
+  const days = [...new Set(list.map((e) => e.date))];
+  document.getElementById('stats').innerHTML = `<div><b>${list.filter((e) => e.kind === 'decision').length}</b><span>${t.decisions}</span></div><div><b>${list.filter((e) => e.kind === 'change').length}</b><span>${t.changes}</span></div><div><b>${days.length}</b><span>${t.days}</span></div>`;
+  document.getElementById('dates').innerHTML = days.map((d) => `<a href="#day-${d}">${d}<span>${list.filter((e) => e.date === d).length}</span></a>`).join('');
+  document.getElementById('list').innerHTML = days.length ? days.map((d) => `<section class="day" id="day-${d}"><h2>${d}<span class="mono">${list.filter((e) => e.date === d).length}</span></h2>${list.filter((e) => e.date === d).map(card).join('')}</section>`).join('') : `<p class="empty">${t.empty}</p>`;
+  try { localStorage.setItem('tslog', JSON.stringify({ lang: S.lang, kind: S.kind, cs: S.cs })); } catch {}
+}
+document.addEventListener('click', (ev) => {
+  const l = ev.target.closest('#lang button'); if (l) { S.lang = l.dataset.l; return render(); }
+  const k = ev.target.closest('#kind button'); if (k) { S.kind = k.dataset.k; S.types.clear(); return render(); }
+  const c = ev.target.closest('#types .chip'); if (c) { S.types.has(c.dataset.t) ? S.types.delete(c.dataset.t) : S.types.add(c.dataset.t); return render(); }
+});
+document.getElementById('csmode').addEventListener('change', (e) => { S.cs = e.target.checked; render(); });
+document.getElementById('q').addEventListener('input', (e) => { S.q = e.target.value; render(); });
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!doctype html>
+<!--
+  Morning brief: what happened while the user was away. A local file in <project>/options/brief/YYYY-MM-DD-morning.html,
+  served next to the boards (serve-boards.py) and opened in the built-in browser. Write it in the user's language.
+  Keep every section short; delete a section that has nothing in it. Screenshots go in ./img/ beside it.
+  Order matters: what they must reply comes first and last; the evidence sits in between.
+-->
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>早间简报 %%DATE%%</title>
+<style>
+  :root { --bg: #F2F2F0; --card: #FFFFFF; --ink: #1D1C1A; --muted: rgba(29,28,26,.62); --line: rgba(29,28,26,.12); --ok: #2F7D4F; --warn: #B8306F; --pick: #EDD05E; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #1D1C1A; --card: #262522; --ink: #F2F2F0; --muted: rgba(242,242,240,.62); --line: rgba(242,242,240,.14); --ok: #7BC79A; --warn: #F08BB8; } }
+  :root[data-theme="dark"] { --bg: #1D1C1A; --card: #262522; --ink: #F2F2F0; --muted: rgba(242,242,240,.62); --line: rgba(242,242,240,.14); --ok: #7BC79A; --warn: #F08BB8; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.55 "Helvetica Neue", "PingFang SC", Arial, sans-serif; }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 28px 16px 64px; }
+  .mono { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  h1 { font-size: clamp(26px, 4vw, 38px); font-weight: 500; letter-spacing: -.02em; margin: 4px 0 8px; line-height: 1.1; }
+  h2 { font-size: 18px; font-weight: 500; margin: 28px 0 8px; }
+  p { margin: 0 0 10px; }
+  .lead { font-size: 17px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; margin: 10px 0; }
+  .link { display: inline-block; font-weight: 500; background: var(--pick); color: #1D1C1A; padding: 6px 12px; border-radius: 999px; text-decoration: none; word-break: break-all; }
+  ul { margin: 6px 0 0; padding-left: 20px; } li { margin: 4px 0; }
+  .ok { color: var(--ok); font-weight: 500; } .warn { color: var(--warn); font-weight: 500; }
+  img { width: 100%; height: auto; display: block; border-radius: 8px; border: 1px solid var(--line); margin-top: 8px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-weight: 500; color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="mono">%%PROJECT%% · 早间简报 · %%DATE%%</p>
+  <!-- One sentence: the outcome, not the process. -->
+  <h1>%%HEADLINE: 例如「你截图的三处已修好，整站在 9 种屏幕宽度下都测过了」%%</h1>
+  <!-- What is live and what is not, and the one reply that moves things on. -->
+  <p class="lead">正式版没动。最新草稿在下面，请在手机上看。没问题的话，回一句「发正式版」。</p>
+  <p><a class="link" href="%%DRAFT_URL%%">%%DRAFT_URL_SHORT%%</a></p>
+
+  <!-- Their own reports first, in their words: what was wrong, why (one plain sentence), what it does now (with a number). -->
+  <h2>你截图的问题</h2>
+  <div class="card">
+    <table>
+      <tr><th style="width:26%">问题</th><th>原因</th><th style="width:30%">现在</th></tr>
+      <tr><td>%%问题%%</td><td>%%原因：一句大白话；如果是我之前引起的，直接说%%</td><td>%%现在：可量化就给数字%%</td></tr>
+    </table>
+    <img src="img/fixes.jpg" alt="%%修复前后的截图说明%%">
+  </div>
+
+  <!-- Found while testing: problems they had not seen. Say if production has them too. -->
+  <h2>测试中顺手发现并修好的</h2>
+  <div class="card">
+    <ul>
+      <li><b>%%问题%%</b>：%%发生在哪、多大、修成什么样；正式版有没有%%</li>
+    </ul>
+  </div>
+
+  <!-- The sweep: what was checked and the result line. Name the counts. -->
+  <h2>测了什么</h2>
+  <div class="card">
+    <p>%%N%% 个页面 × %%M%% 种屏幕，共 %%N×M%% 种组合，本地版和线上草稿各跑了一遍。每种组合检查：</p>
+    <ul>
+      <li>脚本报错；</li>
+      <li>页面比屏幕宽或能左右滑；</li>
+      <li>文字超出屏幕；</li>
+      <li>%%本轮刚定的规则%%；</li>
+      <li>%%靠脚本定位的效果：在几个滚动位置、以及滚到一半刷新后，是否还贴着它的对象%%。</li>
+    </ul>
+    <p class="ok">结果：%%本地版和线上草稿各 X 种组合，全部通过%%。</p>
+  </div>
+
+  <!-- What headless Chrome cannot tell: real-device behaviour. Be specific about what to look for. -->
+  <h2>请你在真机上确认</h2>
+  <div class="card">
+    <ul>
+      <li>%%例如：滚到页底不再回弹露白%%</li>
+    </ul>
+  </div>
+
+  <!-- Every call made without them, each one reversible, each one sentence. -->
+  <h2>昨晚我自己做的决定</h2>
+  <div class="card">
+    <ul>
+      <li>%%决定%%</li>
+    </ul>
+    <p>不同意哪条，告诉我就改。</p>
+  </div>
+
+  <h2>下一步</h2>
+  <div class="card">
+    <p>你看过草稿：没问题就回「发正式版」，我会一次发布到正式版。有问题就截图发我。</p>
+  </div>
+</div>
+</body>
+</html>
